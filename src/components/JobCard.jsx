@@ -61,7 +61,9 @@ const JobCard = ({ job, isSelected, onClick }) => {
         <span className="text-xs text-white/25">
           {job.publication_date?.slice(0, 10)}
         </span>
-        <span className="text-xs font-medium text-indigo-400">View details</span>
+        <button onClick={onClick} className="text-xs font-medium text-indigo-400 hover:text-indigo-300 transition-colors">
+          View details
+        </button>
       </div>
     </div>
   );

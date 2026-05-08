@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import SearchBar from '../components/SearchBar'
 import JobCard from '../components/JobCard'
+import JobDetail from '../components/JobDetail'
 
 const Home = () => {
   const [searchValue, setSearchValue] = useState('')
@@ -57,17 +58,16 @@ const Home = () => {
           ))}
         </div>
 
-        {/* Job Detail (placeholder for now) */}
-        <div className="bg-slate-800 rounded-lg p-6 text-white">
-          {selectedJobId ? (
-            <div>
-              <h2>Job Detail Panel (Coming next)</h2>
-              <p>Selected: {mockJobs.find(j => j.id === selectedJobId)?.title}</p>
-            </div>
-          ) : (
-            <p className="text-white/50">Select a job to see details</p>
-          )}
-        </div>
+       {/* Job Detail */}
+<div>
+  {selectedJobId ? (
+    <JobDetail job={mockJobs.find(j => j.id === selectedJobId)} />
+  ) : (
+    <div className="bg-slate-800 rounded-lg p-6 text-white/50">
+      Select a job to view details
+    </div>
+  )}
+</div>
       </div>
     </div>
   )
