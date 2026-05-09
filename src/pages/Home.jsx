@@ -2,10 +2,14 @@ import { useState } from 'react'
 import SearchBar from '../components/SearchBar'
 import JobCard from '../components/JobCard'
 import JobDetail from '../components/JobDetail'
+import FilterPills from '../components/FilterPills'
 
 const Home = () => {
   const [searchValue, setSearchValue] = useState('')
   const [selectedJobId, setSelectedJobId] = useState(null)
+  const [selectedFilter, setSelectedFilter] = useState('All')  // String, not array
+
+  const filterOptions = ['All', 'Remote', 'Full-time', 'Internship', 'Part-time']
 
   // Mock jobs data for testing
   const mockJobs = [
@@ -41,33 +45,57 @@ const Home = () => {
     }
   ]
 
+  //  Filter jobs by search and filter type
+  const filteredJobs = mockJobs.filter(job => {
+    const matchesSearch = job.title.toLowerCase().includes(searchValue.toLowerCase()) ||
+                          job.company_name.toLowerCase().includes(searchValue.toLowerCase())
+    
+    const matchesFilter = selectedFilter === 'All' || job.job_type === selectedFilter || job.candidate_required_location === selectedFilter
+
+    return matchesSearch && matchesFilter
+  })
+
   return (
     <div className="min-h-screen bg-slate-900 p-6">
       <SearchBar searchValue={searchValue} setSearchValue={setSearchValue} />
       
-      <div className="grid grid-cols-2 gap-6 mt-6">
+      <div className="mt-4 mb-6">
+        <FilterPills 
+          selectedFilter={selectedFilter} 
+          setSelectedFilter={setSelectedFilter} 
+          filters={filterOptions} 
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-6">
         {/* Job List */}
         <div className="space-y-3">
-          {mockJobs.map(job => (
-            <JobCard
-              key={job.id}
-              job={job}
-              isSelected={selectedJobId === job.id}
-              onClick={() => setSelectedJobId(job.id)}
-            />
-          ))}
+          {filteredJobs.length > 0 ? (
+            filteredJobs.map(job => (
+              <JobCard
+                key={job.id}
+                job={job}
+                isSelected={selectedJobId === job.id}
+                onClick={() => setSelectedJobId(job.id)}
+              />
+            ))
+          ) : (
+            <div className="text-white/50 text-center py-8">
+              No jobs found
+            </div>
+          )}
         </div>
 
-       {/* Job Detail */}
-<div>
-  {selectedJobId ? (
-    <JobDetail job={mockJobs.find(j => j.id === selectedJobId)} />
-  ) : (
-    <div className="bg-slate-800 rounded-lg p-6 text-white/50">
-      Select a job to view details
-    </div>
-  )}
-</div>
+        {/* Job Detail */}
+        <div>
+          {selectedJobId && filteredJobs.length !== 0 ? (
+            <JobDetail job={mockJobs.find(j => j.id === selectedJobId)} />
+          ) : (
+            <div className="bg-slate-800 rounded-lg p-6 text-white/50">
+              Select a job to view details
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )
